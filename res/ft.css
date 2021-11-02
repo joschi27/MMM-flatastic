@@ -1,0 +1,40 @@
+.debt {
+    color: #fe1319
+}
+
+.profit {
+    color: #21a358
+}
+
+.default {
+    color: #292929
+}
+
+.ft-grid {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.ft-card {
+    max-width: 260px;
+    padding: 10px;
+    margin: 10px;
+    background-color: rgba(255, 255, 255, .9);
+    font-size: 16px;
+    min-height: 30px;
+    line-height: 2em;
+    border-radius: 15px 15px 15px 15px;
+    vertical-align: middle;
+    -webkit-transition: 2s;
+    transition: 2s
+}
+
+.ft-card-chore-title {
+    font-size: 20px;
+}
+
+.ft-stats-item {
+    background-color: rgba(255, 255, 255, .9);
+    border-radius: 10px 10px 10px 10px;
+}
