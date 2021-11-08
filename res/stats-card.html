@@ -1,6 +1,9 @@
 <div class="ft-stats-item">
-    <span>{{%PLACE%}}</span>
-    <span>IMG</span>
-    <span>{{%USER_NAME%}}</span>
-    <span>{{%POINTS%}} ☆</span>
+    <span class="ft-place-indicator">{{%PLACE%}}</span>
+    <span class="ft-inline-profile-image" style="background-image: url({{%USER_IMAGE_URL%}})"></span>
+    <span class="ft-text-color" style="margin-left:5px; margin-right:auto;">{{%USER_NAME%}}</span>
+    <span style="margin-left:10px; margin-right:10px" class="{{%GOOD_BAD_CLASS%}}">{{%USER_CASH%}}</span>
+    <span class="ft-text-color" style="margin: 0 5px 0 5px">{{%POINTS%}} 
+        <span class="ft-text-color ft-icon-color" style="font-size:20px">🔨&#xFE0E;</span>
+    </span>
 </div>

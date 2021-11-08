@@ -35,6 +35,40 @@
 }
 
 .ft-stats-item {
+    display: flex;
+    justify-content: space-between;
+    min-height: 50px;
+    min-width: 400px;
+    align-items: center;
     background-color: rgba(255, 255, 255, .9);
-    border-radius: 10px 10px 10px 10px;
+    border-radius: 6px;
+    margin: 7px;
+}
+
+.ft-place-indicator {
+    background-color: #ffd13b;
+    border-radius: 0 4px 4px 0;
+    color: rgb(255, 132, 16);
+    font-size: 25px;
+    min-width: 30px;
+    font-weight: 800;
+    padding-left: 5px;
+}
+
+.ft-text-color {
+    color: rgba(31, 31, 31, 0.9);
+}
+
+.ft-icon-color {
+    text-shadow: 0 0 0 rgba(31, 31, 31, 0.9);
+}
+
+.ft-inline-profile-image {
+    width: 35px;
+    height: 35px;
+    margin: 0 5px 0 5px;
+    display: inline-block;
+    border-radius: 100%;
+    border: 2px solid #fff;
+    background-size: cover;
 }

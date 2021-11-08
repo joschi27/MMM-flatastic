@@ -4,33 +4,50 @@ const Log = require("logger");
 
 module.exports = NodeHelper.create({
     start: function() {
-        this.config = null;
+        this.instanceConfigs = [];
         Log.info("flatastic node_helper received started!");
     },
 
     getShoppingList: function(callback) {
-        if (this.config.shoppingListUrl) {
-            this.request(this.config.shoppingListUrl, {}, callback)
+        if (this.instanceConfigs[0].shoppingListUrl) {
+            this.request(this.instanceConfigs[0].shoppingListUrl, {}, callback)
         } else {
             Log.error("Can't get shoppinglist because shoppingListUrl is not defined in the configuration.");
         }
     },
 
     getTaskList: function(callback) {
-        if (this.config.taskListUrl) {
-            this.request(this.config.taskListUrl, {}, callback);
+        if (this.instanceConfigs[0].taskListUrl) {
+            this.request(this.instanceConfigs[0].taskListUrl, {}, callback);
         } else {
             Log.error("Can't get taskList because taskListUrl is not defined in the configuration.");
         }
     },
 
     getInformation: function(callback) {
-        if (this.config.infoUrl) {
-            this.request(this.config.infoUrl, {}, callback);
+        if (this.instanceConfigs[0].infoUrl) {
+            this.request(this.instanceConfigs[0].infoUrl, {}, callback);
         } else {
             Log.error("Can't get wg-information because infoUrl is not defined in the configuration.");
         }
     },
+
+    getChores: function(callback) {
+        if (this.instanceConfigs[0].choresUrl) {
+            this.request(this.instanceConfigs[0].choresUrl, {}, callback);
+        } else {
+            Log.error("Can't get chore statistics because choresUrl is not defined in the configuration.");
+        }
+    },
+
+    getCashFlow: function(callback) {
+        if (this.instanceConfigs[0].cashflowUrl) {
+            this.request(this.instanceConfigs[0].cashflowUrl, {}, callback);
+        } else {
+            Log.error("Can't get cashflow statistics because cashflowUrl is not defined in the configuration.");
+        }
+    },
+
     request: function(url, option, cb) {
         const options = {
             url: url,
@@ -42,7 +59,7 @@ module.exports = NodeHelper.create({
                 "sec-fetch-dest": "empty",
                 "sec-fetch-mode": "cors",
                 "sec-fetch-site": "same-site",
-                "x-api-key": this.config.apiKey,
+                "x-api-key": this.instanceConfigs[0].apiKey,
                 "x-api-version": "2.0.0",
                 "x-client-version": "2.3.20"
             }
@@ -67,20 +84,35 @@ module.exports = NodeHelper.create({
         request(options, callback);
     },
 
-    socketNotificationReceived: function(notification, payload) {
+    socketNotificationReceived: function(notification, payloadObj) {
         Log.info("flatastic node_helper received command: " + notification);
         var self = this;
+        var payload = payloadObj.payload;
+        var instanceID = payloadObj.instance;
         if (notification === "SET_CONFIG") {
-            this.config = payload;
-            Log.info("Flatastic node helper received SET_CONFIG");
-            this.getInformation(function(info) { self.sendSocketNotification("WG_INFO", info); });
-            this.getTaskList(function(info) { self.sendSocketNotification("TASK_LIST", info); });
+            payload.instanceID = instanceID;
+            this.instanceConfigs.push(payload);
+            Log.info("Flatastic node helper received SET_CONFIG for " + instanceID);
+            this.getInformation(function(info) { self.sendToModule("WG_INFO", info, instanceID); });
+            this.getTaskList(function(info) { self.sendToModule("TASK_LIST", info, instanceID); });
+            this.getChores(function(info) { self.sendToModule("CHORES_STATS", info, instanceID); });
+            this.getCashFlow(function(info) { self.sendToModule("CASH_FLOW", info, instanceID); });
         }
         if (notification === "GET_TASK_LIST") {
-            this.getTaskList(function(info) { self.sendSocketNotification("TASK_LIST", info); });
+            this.getTaskList(function(info) { self.sendToModule("TASK_LIST", info, instanceID); });
         }
         if (notification === "GET_WG_INFO") {
-            this.getInformation(function(info) { self.sendSocketNotification("WG_INFO", info); });
+            this.getInformation(function(info) { self.sendToModule("WG_INFO", info, instanceID); });
+        }
+        if (notification === "GET_CHORES_STATS") {
+            this.getChores(function(info) { self.sendToModule("CHORES_STATS", info, instanceID); });
+        }
+        if (notification === "GET_CASH_FLOW") {
+            this.getCashFlow(function(info) { self.sendToModule("CASH_FLOW", info, instanceID); });
         }
     },
+    sendToModule: function(notif, toSend, forInstance) {
+        var sendObj = { notification: notif, payload: toSend, instance: forInstance }
+        this.sendSocketNotification(notif, sendObj);
+    }
 });

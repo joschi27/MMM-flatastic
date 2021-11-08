@@ -8,6 +8,8 @@ Module.register("MMM-flatastic", {
         taskListUrl: 'https://api.flatastic-app.com/index.php/api/chores',
         shoppingListUrl: 'https://api.flatastic-app.com/index.php/api/shoppinglist',
         infoUrl: 'https://api.flatastic-app.com/index.php/api/wg',
+        choresUrl: 'https://api.flatastic-app.com/index.php/api/chores/statistics',
+        cashflowUrl: 'https://api.flatastic-app.com/index.php/api/cashflow/statistics',
         animationSpeed: 0,
         displayOptionalChores: true,
         maxDisplayItems: 10,
@@ -18,7 +20,8 @@ Module.register("MMM-flatastic", {
     start: function() {
         var self = this;
         Log.info("Starting module: " + this.name);
-        this.sendSocketNotification("SET_CONFIG", this.config);
+        this.config.instanceID = this.identifier;
+        this.sendToNodeHelper("SET_CONFIG", this.config);
         Log.info("Sent SET_CONFIG");
 
         fetch(this.file("res/chore-card.html"))
@@ -27,20 +30,6 @@ Module.register("MMM-flatastic", {
         fetch(this.file("res/stats-card.html"))
             .then(response => response.text())
             .then(text => self.STATS_CARD = text);
-
-        this.scheduleUpdate(this.config.updateInterval);
-    },
-
-    scheduleUpdate: function(delay) {
-        var self = this;
-        var nextLoad = this.config.updateInterval;
-        if (typeof delay !== "undefined" && delay >= 0) { nextLoad = delay; }
-        setTimeout(function() { self.updateInfo(); }, nextLoad);
-    },
-
-    updateInfo: function() {
-        this.sendSocketNotification("GET_WG_INFO", this.config);
-        this.sendSocketNotification("GET_TASK_LIST", this.config);
     },
 
     // Override dom generator.
@@ -58,13 +47,21 @@ Module.register("MMM-flatastic", {
         }
         if (this.config.displayStatistics) {
             var stats = "<div>";
-            stats += "<h3>Rangliste</h3>";
             var c = 0;
-            for (const user of this.wgInfo.flatmates) {
+            var users = this.wgInfo.flatmates;
+
+            //Set the actual chore points from the chore stats api, because the chore points in the flatmates user object is wrong.
+            users.forEach(user => user.actualPoints = this.getChoresByUserId(user.id));
+            users.forEach(user => user.balance = this.getCashFlowByUserId(user.id).balance);
+            users.sort((a, b) => { a.actualPoints - b.actualPoints }).reverse();
+            for (const user of users) {
                 var card = JSON.parse(JSON.stringify(this.STATS_CARD));
-                card = card.replaceAll("{{%PLACE%}}", c++);
+                card = card.replaceAll("{{%PLACE%}}", ++c);
                 card = card.replaceAll("{{%USER_NAME%}}", user.firstName);
-                card = card.replaceAll("{{%POINTS%}}", user.chorePoints);
+                card = card.replaceAll("{{%POINTS%}}", user.actualPoints);
+                card = card.replaceAll("{{%USER_IMAGE_URL%}}", user.profileImage);
+                card = card.replaceAll("{{%USER_CASH%}}", (Math.round(user.balance * 100) / 100) + this.wgInfo.currency);
+                card = card.replaceAll("{{%GOOD_BAD_CLASS%}}", user.balance >= 0 ? "profit" : "debt");
                 stats += card;
             }
             stats += "</div>"
@@ -120,8 +117,14 @@ Module.register("MMM-flatastic", {
         return [this.file("res/ft.css")];
     },
 
-    socketNotificationReceived: function(notification, payload) {
+    socketNotificationReceived: function(notification, payloadObj) {
         Log.log(this.name + " received a socket notification: " + notification);
+        var instanceID = payloadObj.instance;
+        if (instanceID != this.config.instanceID) {
+            //We only want notifications ment for our own module instance.
+            return;
+        }
+        var payload = payloadObj.payload;
         if (payload === "LOADING_ERROR") {
             Log.error("flatastic could not fetch " + notification);
             this.errorText = this.translate("LOADING_ERROR");
@@ -143,6 +146,14 @@ Module.register("MMM-flatastic", {
             this.taskList = payload;
             Log.info(this.taskList);
         }
+        if (notification === "CHORES_STATS") {
+            this.choresStats = payload;
+            Log.info(this.choresStats);
+        }
+        if (notification === "CASH_FLOW") {
+            this.cashFlowStats = payload;
+            Log.info(this.cashFlowStats);
+        }
         this.errorText = undefined;
         this.updateDom(this.config.animationSpeed);
     },
@@ -151,6 +162,12 @@ Module.register("MMM-flatastic", {
     //Helper functions
     getUserById: function(id) {
         return this.wgInfo.flatmates.find(user => user.id == id);
+    },
+    getChoresByUserId: function(id) {
+        return this.choresStats.chore[id];
+    },
+    getCashFlowByUserId: function(id) {
+        return this.cashFlowStats.find(user => user.id == id);
     },
     allDataLoaded: function() {
         return this.wgInfo && this.taskList && this.FT_CARD && this.STATS_CARD;
@@ -196,5 +213,9 @@ Module.register("MMM-flatastic", {
         var days = unixRange / 60 / 60 / 24;
         days = Math.round(days);
         return days;
+    },
+    sendToNodeHelper: function(notif, toSend) {
+        var sendObj = { notification: notif, payload: toSend, instance: this.config.instanceID }
+        this.sendSocketNotification("SET_CONFIG", sendObj);
     }
 });
