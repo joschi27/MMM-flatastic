@@ -90,13 +90,32 @@ module.exports = NodeHelper.create({
         var payload = payloadObj.payload;
         var instanceID = payloadObj.instance;
         if (notification === "SET_CONFIG") {
-            payload.instanceID = instanceID;
-            this.instanceConfigs.push(payload);
             Log.info("Flatastic node helper received SET_CONFIG for " + instanceID);
-            this.getInformation(function(info) { self.sendToModule("WG_INFO", info, instanceID); });
-            this.getTaskList(function(info) { self.sendToModule("TASK_LIST", info, instanceID); });
-            this.getChores(function(info) { self.sendToModule("CHORES_STATS", info, instanceID); });
-            this.getCashFlow(function(info) { self.sendToModule("CASH_FLOW", info, instanceID); });
+            payload.instanceID = instanceID;
+
+            //Configure update timers for this instance.
+            var inst = this.instanceConfigs.find(config => config.instanceID == instanceID);
+            if (inst != undefined) {
+                clearInterval(inst.updater);
+
+                //Remove old config / timers
+                for (var i = 0; i < this.instanceConfigs.length; i++) {
+                    var obj = this.instanceConfigs[i];
+
+                    if (obj.id == payload.instanceID) {
+                        this.instanceConfigs.splice(i, 1);
+                    }
+                }
+            }
+            var self = this;
+            payload.updater = setInterval(function() {
+                self.updateAllData(instanceID);
+            }, payload.updateInterval);
+            this.instanceConfigs.push(payload);
+
+            Log.info("Set update time to " + payload.updateInterval + "ms");
+
+            this.updateAllData(instanceID);
         }
         if (notification === "GET_TASK_LIST") {
             this.getTaskList(function(info) { self.sendToModule("TASK_LIST", info, instanceID); });
@@ -110,9 +129,22 @@ module.exports = NodeHelper.create({
         if (notification === "GET_CASH_FLOW") {
             this.getCashFlow(function(info) { self.sendToModule("CASH_FLOW", info, instanceID); });
         }
+        if (notification === "GET_SHOPPING_LIST") {
+            this.getShoppingList(function(info) { self.sendToModule("SHOPPING_LIST", info, instanceID); });
+        }
     },
     sendToModule: function(notif, toSend, forInstance) {
         var sendObj = { notification: notif, payload: toSend, instance: forInstance }
         this.sendSocketNotification(notif, sendObj);
+    },
+
+    //Helper functions
+    updateAllData: function(instanceID) {
+        var self = this;
+        this.getInformation(function(info) { self.sendToModule("WG_INFO", info, instanceID); });
+        this.getTaskList(function(info) { self.sendToModule("TASK_LIST", info, instanceID); });
+        this.getChores(function(info) { self.sendToModule("CHORES_STATS", info, instanceID); });
+        this.getCashFlow(function(info) { self.sendToModule("CASH_FLOW", info, instanceID); });
+        this.getShoppingList(function(info) { self.sendToModule("SHOPPING_LIST", info, instanceID); });
     }
 });

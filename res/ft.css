@@ -12,14 +12,17 @@
 
 .ft-grid {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: flex-start;
     flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 5px;
 }
 
 .ft-card {
-    max-width: 260px;
+    text-align: left;
+    max-width: 300px;
     padding: 10px;
-    margin: 10px;
     background-color: rgba(255, 255, 255, .9);
     font-size: 16px;
     min-height: 30px;
@@ -34,23 +37,30 @@
     font-size: 20px;
 }
 
-.ft-stats-item {
+.ft-stats-row {
     display: flex;
     justify-content: space-between;
-    min-height: 50px;
-    min-width: 400px;
+    min-height: 40px;
+    min-width: 300px;
+    max-width: 500px;
     align-items: center;
     background-color: rgba(255, 255, 255, .9);
     border-radius: 6px;
-    margin: 7px;
+    margin: 5px;
+    gap: 4px;
+}
+
+.ft-stats-item {
+    text-align: center;
+    flex-basis: auto;
 }
 
 .ft-place-indicator {
     background-color: #ffd13b;
     border-radius: 0 4px 4px 0;
     color: rgb(255, 132, 16);
-    font-size: 25px;
-    min-width: 30px;
+    font-size: 20px;
+    min-width: 20px;
     font-weight: 800;
     padding-left: 5px;
 }
@@ -65,10 +75,31 @@
 
 .ft-inline-profile-image {
     width: 35px;
+    min-width: 35px;
+    min-height: 35px;
     height: 35px;
-    margin: 0 5px 0 5px;
-    display: inline-block;
     border-radius: 100%;
     border: 2px solid #fff;
     background-size: cover;
+}
+
+.region.top.left .MMM-flatastic .ft-grid,
+.region.top.center .MMM-flatastic .ft-grid,
+.region.top.right .MMM-flatastic .ft-grid,
+.region.bottom.left .MMM-flatastic .ft-grid,
+.region.bottom.center .MMM-flatastic .ft-grid,
+.region.bottom.right .MMM-flatastic .ft-grid {
+    flex-direction: column;
+    align-items: center;
+    max-width: 300px;
+}
+
+.region.top.left .MMM-flatastic .ft-grid,
+.region.bottom.left .MMM-flatastic .ft-grid {
+    align-items: flex-start;
+}
+
+.region.top.right .MMM-flatastic .ft-grid,
+.region.bottom.right .MMM-flatastic .ft-grid {
+    align-items: flex-end;
 }

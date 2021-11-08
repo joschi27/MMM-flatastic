@@ -3,7 +3,7 @@ Module.register("MMM-flatastic", {
     // Default module config.
     result: [],
     defaults: {
-        updateInterval: 1 * 10 * 1000, // every 10 minutes
+        updateInterval: 10 * 1000, //Miliseconds
         apiKey: "null",
         taskListUrl: 'https://api.flatastic-app.com/index.php/api/chores',
         shoppingListUrl: 'https://api.flatastic-app.com/index.php/api/shoppinglist',
@@ -11,18 +11,23 @@ Module.register("MMM-flatastic", {
         choresUrl: 'https://api.flatastic-app.com/index.php/api/chores/statistics',
         cashflowUrl: 'https://api.flatastic-app.com/index.php/api/cashflow/statistics',
         animationSpeed: 0,
-        displayOptionalChores: true,
-        maxDisplayItems: 10,
-        displayStatistics: true,
-        displayTaskList: true
+        taskListConfig: { show: true, maxDisplayItems: 10, showOptionalChores: true },
+        statisticsConfig: { show: true, showMoney: true, showChorePoints: true },
+        displayShoppingList: false,
     },
 
     start: function() {
         var self = this;
         Log.info("Starting module: " + this.name);
         this.config.instanceID = this.identifier;
-        this.sendToNodeHelper("SET_CONFIG", this.config);
-        Log.info("Sent SET_CONFIG");
+
+        var number = this.identifier.substring(7, 8);
+
+        var self = this;
+        //Set a timeout so the upper most module sets the config first.
+        setTimeout(function() {
+            self.sendToNodeHelper("SET_CONFIG", self.config);
+        }, number * 100);
 
         fetch(this.file("res/chore-card.html"))
             .then(response => response.text())
@@ -30,11 +35,15 @@ Module.register("MMM-flatastic", {
         fetch(this.file("res/stats-card.html"))
             .then(response => response.text())
             .then(text => self.STATS_CARD = text);
+        fetch(this.file("res/shopping-card.html"))
+            .then(response => response.text())
+            .then(text => self.SHOPPING_CARD = text);
     },
 
     // Override dom generator.
     getDom: function() {
         var wrapper = document.createElement("div");
+        wrapper.classList.add("container");
 
         if (!this.allDataLoaded()) {
             wrapper.innerHTML = this.translate("LOADING");
@@ -45,10 +54,17 @@ Module.register("MMM-flatastic", {
             wrapper.innerHTML = "<p>" + this.errorText + "</p>";
             return wrapper;
         }
-        if (this.config.displayStatistics) {
-            var stats = "<div>";
+
+        if (this.config.displayShoppingist) {
+            var shop = "<div>";
+            shop += "not implemented yet! Coming soon.</div>";
+        }
+
+        if (this.config.statisticsConfig.show) {
+            var statGrid = '<div class="ft-grid">';
+            Log.info("added ft-grid");
             var c = 0;
-            var users = this.wgInfo.flatmates;
+            var users = JSON.parse(JSON.stringify(this.wgInfo.flatmates));
 
             //Set the actual chore points from the chore stats api, because the chore points in the flatmates user object is wrong.
             users.forEach(user => user.actualPoints = this.getChoresByUserId(user.id));
@@ -58,29 +74,43 @@ Module.register("MMM-flatastic", {
                 var card = JSON.parse(JSON.stringify(this.STATS_CARD));
                 card = card.replaceAll("{{%PLACE%}}", ++c);
                 card = card.replaceAll("{{%USER_NAME%}}", user.firstName);
-                card = card.replaceAll("{{%POINTS%}}", user.actualPoints);
+                if (this.config.statisticsConfig.showChorePoints) {
+                    card = card.replaceAll("{{%POINTS%}}", user.actualPoints);
+                    card = card.replaceAll("{{%HIDE_CHORE%}}", "");
+                } else {
+                    card = card.replaceAll("{{%POINTS%}}", "");
+                    card = card.replaceAll("{{%HIDE_CHORE%}}", "hidden");
+                }
                 card = card.replaceAll("{{%USER_IMAGE_URL%}}", user.profileImage);
-                card = card.replaceAll("{{%USER_CASH%}}", (Math.round(user.balance * 100) / 100) + this.wgInfo.currency);
+                if (this.config.statisticsConfig.showMoney) {
+                    card = card.replaceAll("{{%USER_CASH_VALUE%}}", (Math.round(user.balance * 100) / 100));
+                    card = card.replaceAll("{{%USER_CASH_CURRENCY%}}", this.wgInfo.currency);
+                    card = card.replaceAll("{{%HIDE_CASH%}}", "");
+                } else {
+                    card = card.replaceAll("{{%HIDE_CASH%}}", "hidden");
+                }
                 card = card.replaceAll("{{%GOOD_BAD_CLASS%}}", user.balance >= 0 ? "profit" : "debt");
-                stats += card;
+                statGrid += card;
+                Log.info("Added card");
             }
-            stats += "</div>"
-            wrapper.innerHTML += stats;
+            Log.info("Added grid-end");
+            statGrid += "</div>";
+            wrapper.innerHTML += statGrid;
         }
-        if (this.config.displayTaskList) {
+        if (this.config.taskListConfig.show) {
             var taskCard = "";
-            taskCard += '<div class="ft-grid" style="max-height: ' + 500 + 'px; max-width: ' + 500 + 'px">';
+            taskCard += '<div class="ft-grid">';
             this.taskList.sort((a, b) => a.timeLeftNext - b.timeLeftNext);
             var curr = 0;
             for (const element of this.taskList) {
-                if (element.rotationTime == -1 && !this.config.displayOptionalChores) {
+                if (element.rotationTime == -1 && !this.config.taskListConfig.showOptionalChores) {
                     continue;
                 }
                 curr++;
-                if (curr > this.config.maxDisplayItems) {
-                    var moreCard = '<div class="ft-card">' +
+                if (curr > this.config.taskListConfig.maxDisplayItems) {
+                    var moreCard = '<div class="ft-card" style="text-align:left">' +
                         '<div class="ft-card-chore-title">' +
-                        '<span class="default">' + "& " + (this.taskList.length - this.config.maxDisplayItems) + ' Weitere...' + '</span>' +
+                        '<span class="default">' + "& " + (this.taskList.length - this.config.taskListConfig.maxDisplayItems) + ' Weitere...' + '</span>' +
                         '</div>' +
                         '</div>';
                     taskCard += moreCard;
@@ -109,7 +139,6 @@ Module.register("MMM-flatastic", {
             wrapper.innerHTML += taskCard;
         }
 
-        //wrapper.innerHTML = "<p>" + this.wgInfo + "</p>";
         return wrapper;
     },
 
@@ -154,6 +183,11 @@ Module.register("MMM-flatastic", {
             this.cashFlowStats = payload;
             Log.info(this.cashFlowStats);
         }
+        if (notification === "SHOPPING_LIST") {
+            this.shoppingList = payload;
+            Log.info(this.shoppingList);
+        }
+
         this.errorText = undefined;
         this.updateDom(this.config.animationSpeed);
     },
