@@ -3,7 +3,7 @@ Module.register("MMM-flatastic", {
     // Default module config.
     result: [],
     defaults: {
-        updateInterval: 10 * 1000, //Miliseconds
+        updateInterval: 60 * 1000, //Miliseconds
         apiKey: "null",
         taskListUrl: 'https://api.flatastic-app.com/index.php/api/chores',
         shoppingListUrl: 'https://api.flatastic-app.com/index.php/api/shoppinglist',
