@@ -72,24 +72,24 @@ Module.register("MMM-flatastic", {
             users.sort((a, b) => { a.actualPoints - b.actualPoints }).reverse();
             for (const user of users) {
                 var card = JSON.parse(JSON.stringify(this.STATS_CARD));
-                card = card.replaceAll("{{%PLACE%}}", ++c);
-                card = card.replaceAll("{{%USER_NAME%}}", user.firstName);
+                card = card.replace(/{{%PLACE%}}/g, ++c);
+                card = card.replace(/{{%USER_NAME%}}/g, user.firstName);
                 if (this.config.statisticsConfig.showChorePoints) {
-                    card = card.replaceAll("{{%POINTS%}}", user.actualPoints);
-                    card = card.replaceAll("{{%HIDE_CHORE%}}", "");
+                    card = card.replace(/{{%POINTS%}}/g, user.actualPoints);
+                    card = card.replace(/{{%HIDE_CHORE%}}/g, "");
                 } else {
-                    card = card.replaceAll("{{%POINTS%}}", "");
-                    card = card.replaceAll("{{%HIDE_CHORE%}}", "hidden");
+                    card = card.replace(/{{%POINTS%}}/g, "");
+                    card = card.replace(/{{%HIDE_CHORE%}}/g, "hidden");
                 }
-                card = card.replaceAll("{{%USER_IMAGE_URL%}}", user.profileImage);
+                card = card.replace(/{{%USER_IMAGE_URL%}}/g, user.profileImage);
                 if (this.config.statisticsConfig.showMoney) {
-                    card = card.replaceAll("{{%USER_CASH_VALUE%}}", (Math.round(user.balance * 100) / 100));
-                    card = card.replaceAll("{{%USER_CASH_CURRENCY%}}", this.wgInfo.currency);
-                    card = card.replaceAll("{{%HIDE_CASH%}}", "");
+                    card = card.replace(/{{%USER_CASH_VALUE%}}/g, (Math.round(user.balance * 100) / 100));
+                    card = card.replace(/{{%USER_CASH_CURRENCY%}}/g, this.wgInfo.currency);
+                    card = card.replace(/{{%HIDE_CASH%}}/g, "");
                 } else {
-                    card = card.replaceAll("{{%HIDE_CASH%}}", "hidden");
+                    card = card.replace(/{{%HIDE_CASH%}}/g, "hidden");
                 }
-                card = card.replaceAll("{{%GOOD_BAD_CLASS%}}", user.balance >= 0 ? "profit" : "debt");
+                card = card.replace(/{{%GOOD_BAD_CLASS%}}/g, user.balance >= 0 ? "profit" : "debt");
                 statGrid += card;
                 Log.info("Added card");
             }
@@ -118,21 +118,21 @@ Module.register("MMM-flatastic", {
                 }
                 var card = JSON.parse(JSON.stringify(this.FT_CARD));
                 var user = this.getUserById(element.currentUser);
-                card = card.replaceAll("{{%FLATMATE_NAME%}}", user.firstName);
+                card = card.replace(/{{%FLATMATE_NAME%}}/g, user.firstName);
                 if (element.rotationTime == -1) {
-                    card = card.replaceAll("{{%DATE%}}", "Bei Bedarf");
-                    card = card.replaceAll("{{%REPEATING_INFO%}}", this.unixToLastDone(element.lastDoneDate));
+                    card = card.replace(/{{%DATE%}}/g, "Bei Bedarf");
+                    card = card.replace(/{{%REPEATING_INFO%}}/g, this.unixToLastDone(element.lastDoneDate));
                 } else {
-                    card = card.replaceAll("{{%DATE%}}", this.unixToDueTime(element.timeLeftNext));
-                    card = card.replaceAll("{{%REPEATING_INFO%}}", this.unixToRepetition(element.rotationTime))
+                    card = card.replace(/{{%DATE%}}/g, this.unixToDueTime(element.timeLeftNext));
+                    card = card.replace(/{{%REPEATING_INFO%}}/g, this.unixToRepetition(element.rotationTime))
                     if (this.unixToDays(element.timeLeftNext) > 0) {
-                        card = card.replaceAll("{{%GOOD_BAD_CLASS%}}", "profit");
+                        card = card.replace(/{{%GOOD_BAD_CLASS%}}/g, "profit");
                     } else if (this.unixToDays(element.timeLeftNext) < 0) {
-                        card = card.replaceAll("{{%GOOD_BAD_CLASS%}}", "debt");
+                        card = card.replace(/{{%GOOD_BAD_CLASS%}}/g, "debt");
                     }
                 }
-                card = card.replaceAll("{{%CHORE_NAME%}}", element.title);
-                card = card.replaceAll("{{%GOOD_BAD_CLASS%}}", "default");
+                card = card.replace(/{{%CHORE_NAME%}}/g, element.title);
+                card = card.replace(/{{%GOOD_BAD_CLASS%}}/g, "default");
                 taskCard += card;
             }
             taskCard += "</div>";
