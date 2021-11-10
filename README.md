@@ -1,22 +1,33 @@
 # MMM-flatastic
-A quick and dirty integration of the flatastic WG-App
+A integration of the [flatastic](https://www.flatastic-app.com/en/) home / commune management app for the [MagicMirror²](https://magicmirror.builders/) 
 
-## Screenshot
-![image](https://user-images.githubusercontent.com/16883655/140921331-358bf3d4-fe97-48ef-8f7d-401b273ce0af.png)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+If yoink some of this code, I would like to be credited :)
 
 ## Description
 This is an implementation of the flatastic WG-App for the MagicMirror Project.
 
 The flatastic app is for people who share appartments. You can use it to document what needs done when, to manage your finances and more.
 
-Note: This project and the author of this project do not have any ties with the flatastic app or the company behind the app. 
+---
+**NOTE**
 
-At the moment you can display:
-- Tasks that need to be done
-- Statistics for chore points
-- Statistics for cashflow
+This project and the author of this project do not have any ties with the flatastic app or the company behind the app. 
 
-Currently, the module is only available in german.
+---
+
+You can display the following:
+- Tasks, sorted by urgency
+- Statistics / Ranking for chore points
+- Statistics / Ranking for cashflow (sorted by chore points)
+
+Currently, the module is only available in german. (If you'd like to change that, see section [Contributing](#contributing)
+
+Some of the code was taken from [Robin Glauser](https://www.robinglauser.ch/blog/2021/03/27/building-a-dashboard-in-a-pictureframe-for-my-flat/), Thank you!
+
+## Screenshot
+![image](https://user-images.githubusercontent.com/16883655/140921331-358bf3d4-fe97-48ef-8f7d-401b273ce0af.png)
 
 ## Installation
 Run these commands at the root of your magic mirror install.
@@ -26,7 +37,8 @@ cd modules
 git clone https://github.com/joschi27/MMM-flatastic
 ```
 ## Using the module
-To use this module, add the following configuration block to the modules array in the `config/config.js` file:
+To use this module, add the following configuration blocks to the modules array in the `config/config.js` file:
+
 ```js
     modules: [{
             module: 'MMM-flatastic',
@@ -50,10 +62,11 @@ To use this module, add the following configuration block to the modules array i
         },
 ```
 
-## API
-The project is based on the undocumented flatastic API (https://api.flatastic-app.com/index.php/api). I have no idea if there are rate limits or similar, so use at your own discretion, and make sure that the update timer is not too high.
+This creates two instances of the flatastic module. One displays the statistics, and one displays the task list.
+You can also display everything in one module, but that can really fill up your screen quickly. The positioning of the different modules is up to you; check out the [MagicMirror documentation](https://docs.magicmirror.builders/modules/configuration.html)
 
 ## How to get your apiKey (to insert in config)
+**Dont share this key with anyone!**
 - Go over to the flatastic web-app at https://www.flatastic-app.com/webapp/
 - Open the developer options on your browser
 - Go to the network tab
@@ -62,12 +75,26 @@ The project is based on the undocumented flatastic API (https://api.flatastic-ap
 - Search for the x-api-key field in the request headers
 - Insert the value in the module config.js file.
 
-!Dont share this key with anyone!
-
 ![key-flatastic](https://user-images.githubusercontent.com/16883655/140923784-7025e76b-e8aa-48b0-9cb3-7b044705162f.png)
+
+# Developer information
 
 ## Current state of the project
 Completed / Maintaining / Improving depending on free time
+
+## Contributing
+You are very welcome to contribute! 
+
+### TODO's:
+- Translations
+- An option to scroll through any lists that are too long to display on the MM (-> the chore list can be very long and will overflow if not limited, so slowly scrolling through / pagination switch could be implemented.)
+- Display of Shopping List
+- Display of Bulletin Board
+- Dark mode (css work)
+- Design overhaul if somebody is a better designer than me :P
+
+## API
+The project is based on the undocumented flatastic API (https://api.flatastic-app.com/index.php/api). I have no idea if there are rate limits or similar, so use at your own discretion, and make sure that the update timer is not too high. The updateInterval counts for every module individually, and in the current state, every update cycle makes 4 requests to the api! Caching is also not supported yet. (See contributing if you'd like to fix that.)
 
 ## Configuration options
 The following properties can be configured:
@@ -129,15 +156,3 @@ The configuration that's global for all modules (like the apiKey) will be taken 
 		</tr>
 	</tbody>
 </table>
-
-
-## Contributing
-You are very welcome to contribute! 
-
-TODOS:
-- Translations
-- An option to scroll through any lists that are too long to display on the MM (-> the chore list can be very long and will overflow if not limited, so slowly scrolling through / pagination switch could be implemented.)
-- Display of Shopping List
-- Display of Bulletin Board
-- Dark mode (css work)
-- Design overhaul if somebody is a better designer than me :P
