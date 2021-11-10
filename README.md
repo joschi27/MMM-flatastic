@@ -2,6 +2,7 @@
 A integration of the [flatastic](https://www.flatastic-app.com/en/) home / commune management app for the [MagicMirror²](https://magicmirror.builders/) 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 If yoink some of this code, I would like to be credited :)
 
 ## Description
