@@ -48,6 +48,7 @@
     border-radius: 6px;
     margin: 5px;
     gap: 4px;
+    font-size: 20px;
 }
 
 .ft-stats-item {
@@ -59,7 +60,7 @@
     background-color: #ffd13b;
     border-radius: 0 4px 4px 0;
     color: rgb(255, 132, 16);
-    font-size: 20px;
+    font-size: 25px;
     min-width: 20px;
     font-weight: 800;
     padding-left: 5px;
