@@ -1,18 +1,17 @@
 const NodeHelper = require('node_helper');
 const request = require('request');
-const Log = require("logger");
 
 module.exports = NodeHelper.create({
     start: function() {
         this.instanceConfigs = [];
-        Log.info("flatastic node_helper received started!");
+        console.log("flatastic node_helper received started!");
     },
 
     getShoppingList: function(callback) {
         if (this.instanceConfigs[0].shoppingListUrl) {
             this.request(this.instanceConfigs[0].shoppingListUrl, {}, callback)
         } else {
-            Log.error("Can't get shoppinglist because shoppingListUrl is not defined in the configuration.");
+            console.error("Can't get shoppinglist because shoppingListUrl is not defined in the configuration.");
         }
     },
 
@@ -20,7 +19,7 @@ module.exports = NodeHelper.create({
         if (this.instanceConfigs[0].taskListUrl) {
             this.request(this.instanceConfigs[0].taskListUrl, {}, callback);
         } else {
-            Log.error("Can't get taskList because taskListUrl is not defined in the configuration.");
+            console.error("Can't get taskList because taskListUrl is not defined in the configuration.");
         }
     },
 
@@ -28,7 +27,7 @@ module.exports = NodeHelper.create({
         if (this.instanceConfigs[0].infoUrl) {
             this.request(this.instanceConfigs[0].infoUrl, {}, callback);
         } else {
-            Log.error("Can't get wg-information because infoUrl is not defined in the configuration.");
+            console.error("Can't get wg-information because infoUrl is not defined in the configuration.");
         }
     },
 
@@ -36,7 +35,7 @@ module.exports = NodeHelper.create({
         if (this.instanceConfigs[0].choresUrl) {
             this.request(this.instanceConfigs[0].choresUrl, {}, callback);
         } else {
-            Log.error("Can't get chore statistics because choresUrl is not defined in the configuration.");
+            console.error("Can't get chore statistics because choresUrl is not defined in the configuration.");
         }
     },
 
@@ -44,7 +43,7 @@ module.exports = NodeHelper.create({
         if (this.instanceConfigs[0].cashflowUrl) {
             this.request(this.instanceConfigs[0].cashflowUrl, {}, callback);
         } else {
-            Log.error("Can't get cashflow statistics because cashflowUrl is not defined in the configuration.");
+            console.error("Can't get cashflow statistics because cashflowUrl is not defined in the configuration.");
         }
     },
 
@@ -67,8 +66,8 @@ module.exports = NodeHelper.create({
 
         function callback(error, response, body) {
             if (error) {
-                Log.error("flatastic node_helper could not fetch " + options.url);
-                Log.error("ft node_helper error: " + error);
+                console.error("flatastic node_helper could not fetch " + options.url);
+                console.error("ft node_helper error: " + error);
             }
             if (!error && response.statusCode == 200) {
                 const info = JSON.parse(body);
@@ -85,12 +84,12 @@ module.exports = NodeHelper.create({
     },
 
     socketNotificationReceived: function(notification, payloadObj) {
-        Log.info("flatastic node_helper received command: " + notification);
+        console.log("flatastic node_helper received command: " + notification);
         var self = this;
         var payload = payloadObj.payload;
         var instanceID = payloadObj.instance;
         if (notification === "SET_CONFIG") {
-            Log.info("Flatastic node helper received SET_CONFIG for " + instanceID);
+            console.log("Flatastic node helper received SET_CONFIG for " + instanceID);
             payload.instanceID = instanceID;
 
             //Configure update timers for this instance.
@@ -113,7 +112,7 @@ module.exports = NodeHelper.create({
             }, payload.updateInterval);
             this.instanceConfigs.push(payload);
 
-            Log.info("Set update time to " + payload.updateInterval + "ms");
+            console.log("Set update time to " + payload.updateInterval + "ms");
 
             this.updateAllData(instanceID);
         }
