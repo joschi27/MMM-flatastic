@@ -10,14 +10,19 @@ This is an implementation of the flatastic WG-App for the MagicMirror Project.
 
 The flatastic app is for people who share appartments. You can use it to document what needs done when, to manage your finances and more.
 
-Note: This project and the author of this project do not have any ties with the flatastic app or the company behind the app. 
+---
+**NOTE**
 
-At the moment you can display:
-- Tasks that need to be done
-- Statistics for chore points
-- Statistics for cashflow
+This project and the author of this project do not have any ties with the flatastic app or the company behind the app. 
 
-Currently, the module is only available in german.
+---
+
+You can display the following:
+- Tasks, sorted by urgency
+- Statistics / Ranking for chore points
+- Statistics / Ranking for cashflow (sorted by chore points)
+
+Currently, the module is only available in german. (If you'd like to change that, see section [Contributing](#contributing)
 
 Some of the code was taken from [Robin Glauser](https://www.robinglauser.ch/blog/2021/03/27/building-a-dashboard-in-a-pictureframe-for-my-flat/), Thank you!
 
