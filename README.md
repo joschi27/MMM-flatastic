@@ -1,5 +1,5 @@
 # MMM-flatastic
-A integration of the [flatastic](https://www.flatastic-app.com/en/) home / commune management app for the [MagicMirror²](https://magicmirror.builders/) 
+An integration of the [flatastic](https://www.flatastic-app.com/en/) home / commune management app for the [MagicMirror²](https://magicmirror.builders/) 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -27,7 +27,7 @@ Currently, the module is only available in german. (If you'd like to change that
 Some of the code was taken from [Robin Glauser](https://www.robinglauser.ch/blog/2021/03/27/building-a-dashboard-in-a-pictureframe-for-my-flat/), Thank you!
 
 ## Screenshot
-![image](https://user-images.githubusercontent.com/16883655/140921331-358bf3d4-fe97-48ef-8f7d-401b273ce0af.png)
+![image](https://user-images.githubusercontent.com/16883655/141485443-e4b325b7-2a49-4993-93db-6c80ff22178b.png)
 
 ## Installation
 Run these commands at the root of your magic mirror install.
