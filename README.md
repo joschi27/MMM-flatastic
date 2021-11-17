@@ -36,6 +36,14 @@ Run these commands at the root of your magic mirror install.
 cd modules
 git clone https://github.com/joschi27/MMM-flatastic
 ```
+
+If you get the error "Warning could not load config file. Starting with default configuration. Error found : Cannot find module 'request'":
+run
+```shell
+cd /MMM-flatastic
+npm install
+```
+
 ## Using the module
 To use this module, add the following configuration blocks to the modules array in the `config/config.js` file:
 
