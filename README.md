@@ -40,7 +40,7 @@ git clone https://github.com/joschi27/MMM-flatastic
 If you get the error "Warning could not load config file. Starting with default configuration. Error found : Cannot find module 'request'":
 run
 ```shell
-cd /MMM-flatastic
+cd MMM-flatastic
 npm install
 ```
 
