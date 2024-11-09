@@ -166,7 +166,7 @@ The configuration that's global for all modules (like the apiKey) will be taken 
 		</tr>
     <tr>
 			<td><code>language</code></td>
-			<td><ul>Sets the language of the module. ISO-693-1 code. (e.g. `en`, `de`, `es`, `fr`, `it`)</ul>
+			<td><ul>Sets the language of the module. ISO-693-1 code. (e.g. <code>'en'</code>, <code>'de'</code>, <code>'es'</code>, <code>'fr'</code>, or <code>'it'</code>)</ul>
 				<br> <br> This value is <b>OPTIONAL</b>
         <br><b>Default value:</b> <code>'de'</code>
 			</td>
