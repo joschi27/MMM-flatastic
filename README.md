@@ -22,7 +22,7 @@ You can display the following:
 - Statistics / Ranking for chore points
 - Statistics / Ranking for cashflow (sorted by chore points)
 
-Currently, the module is only available in german. (If you'd like to change that, see section [Contributing](#contributing)
+Currently, the module is available in English, German, Spanish, French and Italian. (If you'd like to add another language, update the `getTranslations` function in the `MMM-flatastic.js` file and submit a pull request.)
 
 Some of the code was taken from [Robin Glauser](https://www.robinglauser.ch/blog/2021/03/27/building-a-dashboard-in-a-pictureframe-for-my-flat/), Thank you!
 
@@ -56,6 +56,7 @@ To use this module, add the following configuration blocks to the modules array 
                 apiKey: "{{PLEASE FOLLOW GUIDE IN README.MD}}",
                 taskListConfig: { show: false },
                 statisticsConfig: { show: true, showMoney: true, showChorePoints: true },
+                language: 'en',
             }
         },
         {
@@ -66,6 +67,7 @@ To use this module, add the following configuration blocks to the modules array 
                 apiKey: "{{PLEASE FOLLOW GUIDE IN README.MD}}",
                 taskListConfig: { show: true, maxDisplayItems: 5, showOptionalChores: true },
                 statisticsConfig: { show: false },
+                language: 'en',
             }
         },
 ```
@@ -94,7 +96,7 @@ Completed / Maintaining / Improving depending on free time
 You are very welcome to contribute! 
 
 ### TODO's:
-- Translations
+
 - An option to scroll through any lists that are too long to display on the MM (-> the chore list can be very long and will overflow if not limited, so slowly scrolling through / pagination switch could be implemented.)
 - Display of Shopping List
 - Display of Bulletin Board
@@ -160,6 +162,13 @@ The configuration that's global for all modules (like the apiKey) will be taken 
 			<td><ul>Sets the time in milliseconds to animate module updates.</ul>
 				<br> <br> This value is <b>OPTIONAL</b> and setting it could lead to funny glitches :P
         <br><b>Default value:</b> <code>'0'</code>
+			</td>
+		</tr>
+    <tr>
+			<td><code>language</code></td>
+			<td><ul>Sets the language of the module. ISO-693-1 code. (e.g. `en`, `de`, `es`, `fr`, `it`)</ul>
+				<br> <br> This value is <b>OPTIONAL</b>
+        <br><b>Default value:</b> <code>'de'</code>
 			</td>
 		</tr>
 	</tbody>
