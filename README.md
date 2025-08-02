@@ -27,7 +27,7 @@ Currently, the module is available in English, German, Spanish, French and Itali
 Some of the code was taken from [Robin Glauser](https://www.robinglauser.ch/blog/2021/03/27/building-a-dashboard-in-a-pictureframe-for-my-flat/), Thank you!
 
 ## Screenshot
-![image](https://user-images.githubusercontent.com/16883655/141485443-e4b325b7-2a49-4993-93db-6c80ff22178b.png)
+![MMM Flatastic Module](mmm-flatastic-screenshot.png)
 
 ## Installation
 Run these commands at the root of your magic mirror install.
